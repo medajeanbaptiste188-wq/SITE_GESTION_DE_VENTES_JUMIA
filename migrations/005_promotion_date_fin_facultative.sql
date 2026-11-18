@@ -1,0 +1,2 @@
+ALTER TABLE promotions
+  MODIFY COLUMN date_fin DATE NULL;

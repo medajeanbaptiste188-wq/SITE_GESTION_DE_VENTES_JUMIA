@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS categories (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  utilisateur_id BIGINT UNSIGNED NOT NULL,
+  nom VARCHAR(100) NOT NULL,
+  taux_commission DECIMAL(5,2) NOT NULL DEFAULT 10.00,
+  actif TINYINT(1) NOT NULL DEFAULT 1,
+  date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date_modification DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_categories_utilisateur_nom (utilisateur_id, nom),
+  CONSTRAINT fk_categories_utilisateur FOREIGN KEY (utilisateur_id)
+    REFERENCES utilisateurs (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS periodes (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  utilisateur_id BIGINT UNSIGNED NOT NULL,
+  mois TINYINT UNSIGNED NOT NULL,
+  annee SMALLINT UNSIGNED NOT NULL,
+  actif TINYINT(1) NOT NULL DEFAULT 1,
+  date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_periodes_utilisateur_mois_annee (utilisateur_id, mois, annee),
+  CONSTRAINT fk_periodes_utilisateur FOREIGN KEY (utilisateur_id)
+    REFERENCES utilisateurs (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,0 +1,27 @@
+{
+  "name": "gestion-ventes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA personnelle de gestion des ventes.",
+  "main": "app.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "migrate": "node migrations/run.js",
+    "create-admin": "node scripts/create-admin.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.6.1",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.5.0",
+    "mysql2": "^3.14.4",
+    "pdfkit": "^0.20.2",
+    "sharp": "^0.34.5"
+  }
+}

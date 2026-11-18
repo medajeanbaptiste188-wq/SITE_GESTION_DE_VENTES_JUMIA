@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#F26A00">
+    <meta name="description" content="Suivez vos ventes et bénéfices chaque mois.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-192.png?v=20261029-4" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=20261029-4" sizes="180x180">
+    <meta name="apple-mobile-web-app-title" content="Sellora">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20261112-9">
+    <style>
+      .settings-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+      }
+      .settings-row {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        height: auto !important;
+        min-height: fit-content !important;
+        max-height: none !important;
+        border-radius: 14px !important;
+        padding: 14px 16px !important;
+        background: var(--w) !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+      .settings-icon {
+        width: 2.625rem !important;
+        height: 2.625rem !important;
+        flex: 0 0 2.625rem !important;
+        margin-top: 2px !important;
+      }
+      .settings-row > div {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+      .settings-row strong {
+        display: block !important;
+        font-size: 0.875rem !important;
+        line-height: 1.35 !important;
+        font-weight: 700 !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+      }
+      .settings-row small {
+        display: block !important;
+        margin-top: 4px !important;
+        color: var(--mut) !important;
+        font-size: 0.75rem !important;
+        line-height: 1.45 !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+      }
+      .settings-row .text-button {
+        flex: 0 0 auto !important;
+        align-self: center !important;
+        white-space: nowrap !important;
+      }
+      @media (max-width: 440px) {
+        html[data-ui-scale="3"] .settings-row,
+        html[data-ui-scale="4"] .settings-row {
+          flex-wrap: wrap !important;
+        }
+        html[data-ui-scale="3"] .settings-row .text-button,
+        html[data-ui-scale="4"] .settings-row .text-button {
+          margin-left: auto !important;
+          margin-top: 6px !important;
+        }
+      }
+      @media (max-width: 720px) {
+        html[data-ui-scale="3"] .page-content,
+        html[data-ui-scale="4"] .page-content {
+          padding-left: 8px !important;
+          padding-right: 8px !important;
+        }
+        html[data-ui-scale="3"] .topbar,
+        html[data-ui-scale="4"] .topbar {
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+        }
+        html[data-ui-scale="3"] .app-dialog,
+        html[data-ui-scale="4"] .app-dialog {
+          width: min(calc(100% - 8px), 440px) !important;
+          max-width: min(calc(100% - 8px), 440px) !important;
+          max-height: calc(100dvh - 20px) !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var s = localStorage.getItem('sellora_ui_scale') || '2';
+          document.documentElement.setAttribute('data-ui-scale', s);
+        } catch (e) {}
+      })();
+    </script>
+    <title>Sellora</title>
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Application Sellora">
+      <div id="pull-refresh-indicator" class="pull-refresh-indicator" aria-live="polite" aria-label="Actualisation des données">
+        <span class="pull-refresh-icon" aria-hidden="true"></span>
+      </div>
+      <aside id="app-update-notice" class="app-update-notice" hidden aria-live="polite">
+        <span>Une mise à jour est disponible.</span>
+        <button id="app-update-button" type="button">Actualiser</button>
+      </aside>
+      <section id="login-view" class="app-view login-view" hidden aria-label="Connexion à Sellora">
+        <form id="login-form" class="login-form">
+          <div class="app-logo"><img src="icons/D03EA6DA-1F3A-4D67-B697-69438005C2E8.PNG" alt="Logo Sellora"></div>
+          <p>Suivez vos bénéfices mois après mois</p>
+          <label class="form-field"><span>Identifiant</span><input id="login-identifier" autocomplete="username" required placeholder="Votre identifiant"></label>
+          <label class="form-field"><span>Mot de passe</span><input id="login-password" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+          <p id="login-message" class="form-message" role="status"></p>
+          <button id="login-button" class="primary-button" type="submit">Se connecter</button>
+          <button id="open-signup-button" class="signup-link" type="button">Pas encore de compte ? <span>Créer un compte</span></button>
+        </form>
+      </section>
+      <dialog id="signup-dialog" class="app-dialog" aria-labelledby="signup-title">
+        <form id="signup-form">
+          <div class="dialog-heading"><h2 id="signup-title">Créer un compte</h2><button id="close-signup-dialog" class="icon-button" type="button" aria-label="Fermer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+          <p class="dialog-description">Créez votre espace pour gérer vos ventes.</p>
+          <label class="form-field"><span>Identifiant</span><input id="signup-identifier" autocomplete="username" required minlength="3" maxlength="100" placeholder="Ex. nom-boutique"></label>
+          <label class="form-field"><span>Mot de passe</span><input id="signup-password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="8 caractères minimum"></label>
+          <label class="form-field"><span>Confirmer le mot de passe</span><input id="signup-password-confirm" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="••••••••"></label>
+          <p id="signup-message" class="form-message" role="status"></p><button id="signup-button" class="primary-button" type="submit">Créer mon compte</button>
+        </form>
+      </dialog>
+      <header id="dashboard-header" class="topbar" hidden>
+        <h1>Tableau de bord</h1>
+        <label class="month-picker">
+          <span class="sr-only">Mois affiché</span>
+          <span class="month-picker-value" aria-hidden="true"></span>
+          <select id="month-select" aria-label="Choisir le mois"></select>
+        </label>
+      </header>
+
+      <section id="dashboard-view" class="page-content app-view" hidden>
+        <section class="profit-card" aria-labelledby="profit-label">
+          <p id="profit-label">Bénéfice net</p>
+          <strong id="net-profit">0 FCFA</strong>
+          <span id="profit-trend" class="trend">▲ 0 %</span>
+        </section>
+
+        <section class="weekly-grid" aria-label="Indicateurs de la semaine">
+          <article class="weekly-card weekly-card-profit"><p id="weekly-profit-label">Bénéfice de la semaine</p><strong id="weekly-profit">0 FCFA</strong></article>
+          <article class="weekly-card weekly-card-cost"><p id="weekly-cost-label">Coût d'achat de la semaine</p><strong id="weekly-cost">0 FCFA</strong></article>
+        </section>
+
+        <section class="kpi-grid" aria-label="Indicateurs mensuels">
+          <article class="kpi-card"><p>Chiffre d'affaires</p><strong id="revenue">0 FCFA</strong></article>
+          <article class="kpi-card"><p>Commissions Jumia</p><strong id="commission">0 FCFA</strong></article>
+          <article class="kpi-card"><p>Coût d'achat</p><strong id="cost">0 FCFA</strong></article>
+          <article class="kpi-card"><p>Baisse de prix (promos)</p><strong id="discount">0 FCFA</strong></article>
+          <article class="kpi-card"><p>Frais fixes Jumia</p><strong id="fixed-fees">0 FCFA</strong></article>
+          <article class="kpi-card"><p>Articles vendus</p><strong id="items-sold">0</strong></article>
+        </section>
+
+        <section class="chart-card" aria-labelledby="chart-title">
+          <div class="chart-heading"><h2 id="chart-title">Bénéfice sur 12 mois</h2><span id="chart-year"></span></div>
+          <div id="profit-chart" class="bar-chart" role="img" aria-label="Évolution du bénéfice sur les douze derniers mois"></div>
+          <div id="chart-labels" class="chart-labels" aria-hidden="true"></div>
+        </section>
+      </section>
+
+      <section id="products-view" class="app-view products-view" hidden aria-labelledby="products-title">
+        <header class="topbar">
+          <h1 id="products-title">Produits</h1>
+          <span id="product-count" class="count-pill">24 actifs</span>
+        </header>
+        <div class="page-content">
+          <label class="search-field">
+            <span aria-hidden="true">⌕</span>
+            <input id="product-search" type="search" placeholder="Rechercher un produit…" autocomplete="off">
+          </label>
+          <div id="category-chips" class="chips" aria-label="Filtrer par catégorie"></div>
+          <div id="product-list" class="product-list" aria-live="polite"></div>
+        </div>
+        <button id="new-product-button" class="fab" type="button">＋ Nouveau produit</button>
+      </section>
+
+      <section id="product-form-view" class="app-view product-form-view" hidden aria-labelledby="product-form-title">
+        <header class="topbar">
+          <h1 id="product-form-title">Nouveau produit</h1>
+          <button id="cancel-product-button" class="text-button" type="button">Annuler</button>
+        </header>
+        <form id="product-form" class="page-content product-form">
+          <input id="product-id" type="hidden">
+          <label class="form-field"><span>Nom du produit</span><input id="product-name" name="nom" required placeholder="Ex. Parfum Mondaine"></label>
+          <label class="form-field"><span>Catégorie</span><select id="product-category" name="categorie" required><option value="">Choisir une catégorie</option></select></label>
+          <div class="product-image-field">
+            <div id="product-image-preview" class="product-image-preview" aria-hidden="true"><span>🧴</span></div>
+            <label class="form-field product-image-input"><span>Photo du produit <em>(facultative)</em></span><input id="product-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"><small>JPEG, PNG ou WebP · 5 Mo maximum · optimisée automatiquement</small></label>
+          </div>
+          <div class="form-grid">
+            <label class="form-field"><span>Prix d'achat (FCFA)</span><input id="purchase-price" name="prix_achat" inputmode="numeric" type="number" min="0" required placeholder="3 000"></label>
+            <label class="form-field"><span>Prix de vente (FCFA)</span><input id="sale-price" name="prix_vente" inputmode="numeric" type="number" min="0" required placeholder="6 000"></label>
+          </div>
+          <div class="form-grid">
+            <label class="form-field"><span>Commission Jumia (%)</span><input id="commission-rate" name="taux_commission" inputmode="decimal" type="number" min="0" max="100" step="0.01" value="10" required></label>
+            <label class="form-field"><span>Frais fixe Jumia (FCFA)</span><input id="fixed-fee" name="frais_fixe" inputmode="decimal" type="number" min="0" step="0.01" value="0" required></label>
+          </div>
+          <label class="form-field"><span>Stock (facultative)</span><input id="product-stock" name="stock" inputmode="numeric" type="number" min="0" placeholder="40"></label>
+          <section class="calculation-card" aria-live="polite" aria-label="Calcul automatique">
+            <p><span>Commission</span><b id="calculated-commission">0 FCFA</b></p>
+            <p><span>Frais fixe</span><b id="calculated-fixed-fee">0 FCFA</b></p>
+            <p><span>Marge</span><b id="calculated-margin">0 %</b></p>
+            <p class="calculation-total"><span>Bénéfice par vente</span><strong id="calculated-profit">0 FCFA</strong></p>
+          </section>
+          <p id="product-form-message" class="form-message" role="status"></p>
+          <button class="primary-button" type="submit">Enregistrer le produit</button>
+        </form>
+      </section>
+
+      <section id="sales-view" class="app-view sales-view" hidden aria-labelledby="sales-title">
+        <header class="topbar">
+          <h1 id="sales-title">Ventes</h1>
+          <label class="month-picker"><span class="sr-only">Mois affiché</span><span class="month-picker-value" aria-hidden="true"></span><select id="sales-month-select" aria-label="Choisir le mois des ventes"></select></label>
+        </header>
+        <div class="page-content">
+          <section class="pending-sales" aria-labelledby="pending-sales-title">
+            <div class="section-heading"><h2 id="pending-sales-title">En attente de livraison</h2><span id="pending-sales-count">0</span></div>
+            <div id="pending-sales-list" class="sales-list" aria-live="polite"></div>
+          </section>
+          <section class="sales-summary" aria-label="Résumé des ventes"><span id="sales-count">0 vente</span><span>Bénéfice <strong class="prix" id="sales-profit">0 FCFA</strong></span></section>
+          <div id="sales-list" class="sales-list" aria-live="polite"></div>
+        </div>
+        <button id="new-sale-button" class="fab" type="button">＋ Nouvelle commande</button>
+      </section>
+
+      <section id="promotions-view" class="app-view promotions-view" hidden aria-labelledby="promotions-title">
+        <header class="topbar promotions-topbar">
+          <h1 id="promotions-title">Promotions</h1>
+          <div class="topbar-actions"><label class="month-picker"><span class="sr-only">Mois affiché</span><span class="month-picker-value" aria-hidden="true"></span><select id="promotions-month-select" aria-label="Choisir le mois des promotions"></select></label><button id="create-promotion-button" class="text-button" type="button">+ Créer</button></div>
+        </header>
+        <div class="page-content">
+          <div id="promotion-list" class="promotion-list" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <dialog id="promotion-dialog" class="app-dialog" aria-labelledby="promotion-dialog-title">
+        <form id="promotion-form" method="dialog">
+          <input id="promotion-id" type="hidden">
+          <div class="dialog-heading"><h2 id="promotion-dialog-title">Nouvelle promotion</h2><button id="close-promotion-dialog" class="icon-button" type="button" aria-label="Fermer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+          <label class="form-field"><span>Nom de la promotion</span><input id="promotion-name" required placeholder="Ex. Dimanche -10 %"></label>
+          <div class="form-field"><span id="promotion-products-label">Produits concernés</span><select id="promotion-product-picker" aria-labelledby="promotion-products-label" aria-describedby="promotion-products-help"><option value="">Choisir un produit</option></select><div id="promotion-products" class="promotion-products" role="list" aria-labelledby="promotion-products-label"></div><small id="promotion-products-help">Choisissez chaque produit dans la liste. Vous pouvez en sélectionner plusieurs.</small></div>
+          <div class="form-grid"><label class="form-field"><span>Type de promo</span><select id="promotion-type"><option value="pourcentage">Réduction en %</option><option value="montant">Réduction en FCFA</option><option value="prix_promo">Prix promo</option></select></label><label class="form-field"><span id="promotion-value-label">Valeur</span><input id="promotion-value" type="number" min="0" required inputmode="decimal" placeholder="10"></label></div>
+          <div class="form-grid promotion-date-grid"><label class="form-field"><span>Date de début</span><input id="promotion-start" type="date" required></label><label class="form-field"><span>Date de fin (facultative)</span><input id="promotion-end" type="date"></label></div>
+          <div class="form-grid"><label class="form-field"><span>Renouvellement</span><select id="promotion-recurrence"><option value="aucune">Une seule fois</option><option value="hebdomadaire">Chaque semaine</option></select></label><label id="promotion-weekday-field" class="form-field" hidden><span>Jour de renouvellement</span><select id="promotion-weekday"><option value="0">Dimanche</option><option value="1">Lundi</option><option value="2">Mardi</option><option value="3">Mercredi</option><option value="4">Jeudi</option><option value="5">Vendredi</option><option value="6">Samedi</option></select></label></div>
+          <p id="promotion-loss-warning" class="loss-alert" role="status" hidden></p>
+          <p id="promotion-form-message" class="form-message" role="status"></p><div class="promotion-form-actions"><button id="delete-promotion-button" class="danger-button" type="button" hidden>Supprimer</button><button id="save-promotion-button" class="primary-button" type="submit">Créer la promotion</button></div>
+        </form>
+      </dialog>
+
+      <dialog id="sale-dialog" class="app-dialog" aria-labelledby="sale-dialog-title">
+        <form id="sale-form">
+          <div class="dialog-heading"><h2 id="sale-dialog-title">Nouvelle commande</h2><button id="close-sale-dialog" class="icon-button" type="button" aria-label="Fermer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+          <p class="dialog-description">La commande sera prise en compte après validation de sa livraison.</p>
+          <label class="form-field"><span>Produit</span><select id="sale-product" required><option value="">Choisir un produit</option></select></label>
+          <label class="form-field"><span>Canal de vente</span><select id="sale-channel" required><option value="jumia" selected>Jumia</option><option value="directe">Vente directe</option></select></label>
+          <div class="form-grid"><label class="form-field"><span>Date de commande</span><input id="sale-date" type="date" required></label><label class="form-field"><span>Quantité</span><input id="sale-quantity" type="number" min="1" step="1" inputmode="numeric" value="1" required></label></div>
+          <label class="form-field"><span>Autres frais (FCFA, facultatif)</span><input id="sale-other-fees" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></label>
+          <section class="calculation-card" aria-live="polite" aria-label="Bénéfice estimé de la commande">
+            <p><span>Commission</span><b id="sale-preview-commission">0 FCFA</b></p>
+            <p><span>Frais fixe</span><b id="sale-preview-fixed">0 FCFA</b></p>
+            <p class="calculation-total"><span>Bénéfice estimé</span><strong id="sale-preview-profit">0 FCFA</strong></p>
+            <p id="sale-preview-note" class="sale-preview-note"></p>
+          </section>
+          <p id="sale-form-message" class="form-message" role="status"></p><button id="save-sale-button" class="primary-button" type="submit">Enregistrer la commande</button>
+        </form>
+      </dialog>
+
+      <section id="settings-view" class="app-view settings-view" hidden aria-labelledby="settings-title">
+        <header class="topbar"><h1 id="settings-title">Réglages</h1></header>
+        <div class="page-content settings-content">
+          <section class="settings-group accessibility-settings" aria-labelledby="ui-scale-title">
+            <div class="scale-header">
+              <div class="scale-title-wrap">
+                <span class="settings-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <text x="2" y="16" font-family="Plus Jakarta Sans, system-ui, sans-serif" font-size="12" font-weight="700" fill="currentColor">A</text>
+                    <text x="12" y="18" font-family="Plus Jakarta Sans, system-ui, sans-serif" font-size="17" font-weight="800" fill="currentColor">A</text>
+                  </svg>
+                </span>
+                <div>
+                  <h2 id="ui-scale-title">Taille du texte et des icônes</h2>
+                  <p>Ajuster la lisibilité sur tout le site</p>
+                </div>
+              </div>
+              <span id="ui-scale-badge" class="scale-badge">Normal (100 %)</span>
+            </div>
+
+            <div class="scale-stepper">
+              <button id="ui-scale-down" class="scale-step-btn" type="button" aria-label="Réduire la taille" title="Réduire la taille">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+              </button>
+
+              <div class="scale-track-wrap">
+                <input id="ui-scale-slider" class="scale-slider" type="range" min="1" max="4" step="1" value="2" aria-label="Niveau de zoom de l'interface">
+                <div class="scale-ticks" aria-hidden="true">
+                  <button type="button" class="scale-tick" data-level="1">85 %</button>
+                  <button type="button" class="scale-tick is-active" data-level="2">100 %</button>
+                  <button type="button" class="scale-tick" data-level="3">115 %</button>
+                  <button type="button" class="scale-tick" data-level="4">130 %</button>
+                </div>
+              </div>
+
+              <button id="ui-scale-up" class="scale-step-btn" type="button" aria-label="Agrandir la taille" title="Agrandir la taille">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+            </div>
+          </section>
+
+          <section class="settings-group settings-management" aria-labelledby="categories-settings-title">
+            <h2 id="categories-settings-title">Catégories et commissions Jumia</h2><p>La commission et le frais fixe Jumia de la catégorie sont repris sur les nouveaux produits. Ils s’appliquent uniquement aux ventes Jumia.</p>
+            <form id="settings-category-form" class="settings-inline-form"><input id="settings-category-id" type="hidden"><label class="form-field"><span>Nom</span><input id="settings-category-name" required maxlength="100" placeholder="Ex. Électronique"></label><label class="form-field"><span>Commission (%)</span><input id="settings-category-rate" name="taux_commission" inputmode="decimal" required type="number" min="0" max="100" step="0.01" placeholder="10"></label><label class="form-field"><span>Frais fixe (FCFA)</span><input id="settings-category-fixed-fee" name="frais_fixe" inputmode="decimal" required type="number" min="0" step="0.01" placeholder="0"></label><button id="settings-category-submit" class="text-button" type="submit">Ajouter</button><button id="settings-category-cancel" class="text-button" type="button" hidden>Annuler</button></form>
+            <p id="settings-category-message" class="form-message settings-management-message" role="status"></p>
+            <div id="settings-category-list" class="settings-items" aria-live="polite"></div>
+          </section>
+          <section class="settings-group" aria-labelledby="export-title"><h2 id="export-title">Exporter le mois sélectionné</h2><p>Choisissez le format de votre rapport mensuel.</p><div class="export-buttons"><button data-export-format="xlsx" type="button">Excel</button><button data-export-format="pdf" type="button">PDF</button></div></section>
+          <section class="settings-row"><span class="settings-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12l3 3v13H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg></span><div><strong>Sauvegarde complète</strong><small>Exporter catégories, produits, promotions, ventes et images en JSON</small></div><button id="backup-button" class="text-button" type="button">Lancer</button></section>
+          <label class="settings-row restore-row"><span class="settings-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M4 12h10a5 5 0 1 1-5 5"/></svg></span><div><strong>Restaurer une sauvegarde</strong><small>Remplace toutes vos données actuelles par un fichier JSON complet</small></div><span class="text-button">Choisir</span><input id="restore-input" type="file" accept="application/json,.json"></label>
+          <p id="settings-message" class="form-message" role="status"></p><button id="logout-button" class="outline-button" type="button">Se déconnecter</button>
+        </div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Navigation principale">
+        <button class="nav-item is-active" type="button" data-view="dashboard" aria-current="page"><svg class="nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Accueil</button>
+        <button class="nav-item" type="button" data-view="products"><svg class="nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Produits</button>
+        <button class="nav-item" type="button" data-view="sales"><svg class="nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 5h14M5 12h14M5 19h14"/><circle cx="3" cy="5" r=".75" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r=".75" fill="currentColor" stroke="none"/><circle cx="3" cy="19" r=".75" fill="currentColor" stroke="none"/></svg>Ventes</button>
+        <button class="nav-item" type="button" data-view="promotions"><svg class="nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M19 5 5 19M7 6.5h.01M17 17.5h.01"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg>Promos</button>
+        <button class="nav-item" type="button" data-view="settings"><svg class="nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="var(--w)"/><circle cx="15" cy="17" r="3" fill="var(--w)"/></svg>Réglages</button>
+      </nav>
+    </main>
+    <script src="js/api.js?v=20261027-3"></script>
+    <script src="js/app.js?v=20261112-9"></script>
+  </body>
+</html>
